@@ -30,7 +30,7 @@ export function Layout({
             <div className="hidden lg:flex">
               <Link href="/" aria-label="Home" className="flex flex-row align-center">
                 <Logo className="h-6" />
-                <span className="h-6 font-bold mt-4">EasyBlog</span>
+                <span className="h-6 font-bold mt-[10px] ml-[10px]">EasyBlog</span>
               </Link>
             </div>
             <Header />

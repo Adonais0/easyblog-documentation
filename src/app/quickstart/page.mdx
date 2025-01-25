@@ -1,0 +1,286 @@
+import projectScreen1 from '@/images/screenshots/project-add.gif'
+import settingScreen from '@/images/screenshots/setting-create-key.gif'
+import Image from 'next/image'
+
+export const metadata = {
+  title: 'Quickstart',
+  description:
+    'This guide will get you all set up and have EasyBlog in your project. We\'ll cover how to get started using our Next.js SDK and how to create your first project.',
+}
+
+# Quickstart
+
+This guide will get you all set up and have EasyBlog in your project. We'll cover how to get started using our Next.js SDK and how to create your first project. We'll also look at where to go next to find all the information you need to take full advantage of EasyBlog. {{ className: 'lead' }}
+
+## Create a New Project
+
+To setup your first EasyBlog project, login to EasyBlog dashboard, click `Create a Project` button on the top right of the project page. Enter project name, and click `Create`. 
+
+<Image 
+  src={projectScreen1}
+  alt=""
+  unoptimized
+/>
+
+Congratulations! You just created your first project. Now we'll add blogs to this project and render the project in your application.
+
+## Generte an API Key
+
+To authenticate your application, you'll need to provide both API key and project id. To create an API key, navigate to **Settings** page, click **Generate New Key**, copy the key value once generated. This key will only be displayed once so make sure you mark the key down immediately after it's generated.
+
+<Note>
+  You can find `project_id` in the Project tab. Each project will have a unique `project_id`.
+</Note>
+
+<Image
+  src={settingScreen}
+  alt=""
+  unoptimized
+ />
+
+
+## Add Project Id and API Key
+
+If you already have an `.env` file, that's perfect. If you don't, create a `.env` file at the root at your project directory. Add below lines into your `.env` file, replace the `<PROJECT_API_KEY>` with the API key you just created, and the `<PROJECT_ID>` you find on the project page.
+
+```text
+EASYBLOG_API_KEY=<PROJECT_API_KEY>
+EASYBLOG_PROJECT_ID=<PROJECT_ID>
+EASYBLOG_API_URL=https://api.easyblog.com
+```
+
+## Install NPM Package
+
+At the root of your project directory, install `easyblog-next` library.
+
+```bash {{ title: 'npm' }}
+npm install @weekend-studio/easyblog-next
+```
+
+## Create The Blog List Page
+
+If you haven't, create a directory in your project for blog pages.
+
+<CodeGroup>
+```text {{ title: 'App Router'}}
+/your-project
+├── app/
+│   ├── blogs/
+│   │   ├── page.tsx        # Blog listing page
+│   │   └── [slug]/
+│   │       └── page.tsx    # Blog detail page
+│   ├── layout.tsx
+│   └── page.tsx
+```
+
+```text {{ title: 'Page Router'}}
+/your-project
+├── pages/
+│   ├── blogs/
+│   │   ├── index.tsx        # Blog listing page
+│   │   └── [slug].tsx       # Blog detail page
+│   └── _app.tsx
+```
+</CodeGroup>
+
+To create a blog listing page, go to the `blogs/page.tsx` (App Router) or `blogs/index.tsx` (Page Router) and add below code.
+
+<CodeGroup>
+
+```tsx {{ title: 'App Router' }}
+// your-project/app/blogs/page.tsx
+
+import { NextBlogListPage } from '@weekend-studio/easyblog-next/app';
+
+const config = {
+  apiKey: process.env.EASYBLOG_API_KEY!,
+  projectId: process.env.EASYBLOG_PROJECT_ID!,
+  apiUrl: process.env.EASYBLOG_API_URL!
+};
+
+const easyblogOptions = { // Customize based on your need
+  showThumbnail: true,
+  showReadingTime: true,
+  showExcerpt: true,
+  showTags: true,
+  showDate: true,
+  showAuthor: true,
+  showCategory: true,
+}
+
+export default async function BlogPage({
+  searchParams
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const resolvedParams = await searchParams;
+  
+  return (
+      <NextBlogListPage 
+        config={config}
+        type="grid"
+        darkMode={true}
+        searchParams={resolvedParams}
+        displayOptions={easyblogOptions}
+      />
+  );
+}
+```
+
+```tsx {{ title: 'Page Router' }}
+// your-project/pages/blogs/page.tsx
+
+import { 
+  withListServerSideProps, 
+  NextBlogListPageForPageRouter
+} from "@weekend-studio/easyblog-next/page";
+import { EasyBlogConfig } from "@weekend-studio/easyblog-next/models";
+import { InferGetStaticPropsType } from "next";
+  
+const config: EasyBlogConfig = {
+  apiKey: process.env.EASYBLOG_API_KEY!,
+  apiUrl: process.env.EASYBLOG_API_URL! ,
+  projectId: process.env.EASYBLOG_PROJECT_ID!
+};
+
+export const getServerSideProps = withListServerSideProps({
+  config,
+  type: "list",
+  displayOptions: { // Customize based on your need
+    showThumbnail: true,
+    showReadingTime: true,
+    showExcerpt: true,
+    showTags: true,
+    showDate: true,
+    showAuthor: true,
+    showCategory: true, 
+  }
+}).getServerSideProps;
+
+export default function BlogsPage(props: InferGetStaticPropsType<typeof getServerSideProps>) {
+  return (
+      <NextBlogListPageForPageRouter 
+        {...props}
+      />
+  );
+}
+```
+
+</CodeGroup>
+
+
+## Create The Blog Detail Page
+
+<CodeGroup>
+```tsx {{ title: 'App Router'}}
+// your-project/app/blogs/[slug]/page.tsx
+import { 
+  getBlogPaths, 
+  NextBlogPage,
+  getBlogPost
+} from '@weekend-studio/easyblog-next/app';
+import { getSEOTags, GetSEOTagsParams } from '@weekend-studio/easyblog-next/seo';
+import { ArrowLeftIcon } from 'lucide-react';
+import Link from 'next/link';
+
+const config = {
+  apiKey: process.env.EASYBLOG_API_KEY!,
+  projectId: process.env.EASYBLOG_PROJECT_ID!,
+  apiUrl: process.env.EASYBLOG_API_URL!
+};
+
+// Add basic SEO properties
+const baseSEO = {
+  applicationName: "EasyBlog",
+  description: "EasyBlog is a lightweight blog CMS that allows you to create and manage your blog posts.",
+  domainName: "easyblog.io",
+  x_handle: "@realchuyao",
+}
+
+export const generateStaticParams = async () => {
+  const paths = await getBlogPaths(config);
+  return paths;
+};
+
+export const generateMetadata = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const slug = (await params).slug;
+  const post = await getBlogPost(config, slug);
+  
+  return getSEOTags({
+    ...baseSEO,
+    title: post.title,
+    description: post.excerpt,
+    canonicalUrlRelative: `/blogs/${slug}`,
+    keywords: ["blog", "article", post.title],
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+    },
+  } as GetSEOTagsParams);
+};
+
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const slug = (await params).slug;
+  return (
+    // You can customize the page styles here by wrapping <NextBlogPage> in extra layers
+    <NextBlogPage config={config} slug={slug} darkMode={true} />
+  );
+}
+
+export const revalidate = 3600; // revalidate every 1 hour
+```
+
+```tsx {{ title: 'Page Router'}}
+// your-project/pages/blogs/[slug].tsx
+import {
+  NextBlogPageForPageRouter,
+  withPageStaticProps
+} from '@weekend-studio/easyblog-next/page';
+import { InferGetStaticPropsType } from 'next';
+import Layout from '../layout';
+
+const config = {
+  apiKey: process.env.EASYBLOG_API_KEY!,
+  projectId: process.env.EASYBLOG_PROJECT_ID!,
+  apiUrl: process.env.EASYBLOG_API_URL!
+};
+
+// Export both getStaticProps and getStaticPaths
+const { getStaticProps, getStaticPaths } = withPageStaticProps({
+  config
+});
+
+export default function BlogPost(props: InferGetStaticPropsType<typeof getStaticProps>) {
+  return (
+    <Layout>
+      <NextBlogPageForPageRouter {...props} config={config} />
+    </Layout>
+  );
+}
+
+export { getStaticProps, getStaticPaths };
+```
+</CodeGroup>
+
+Save your changes, then run
+
+```bash {{ title: 'npm'}}
+npm run dev
+```
+
+Navigate to `localhost:3000/blogs` then you'll see an empty blog page if you don't have any blogs written.
+
+## Write Your First Blog
+
+On Easyblog dashboard, navigate to **Blogs** page, click **Add a New Blog** and add your first blog. After you're done with editing content, click **Submit**, this will open the publish dialog where you can enter all the metadata for the blog, such as blog tags, categories, and excerpt. Click **Publish**, and that's it! EasyBlog will automatically help you generate the SEO metadata during build time so you don't need to make extra configurations.
+
+## Check Your Blog
+
+Now, navigate to `localhost:3000/blogs`, there you should be able to see your blog live! 
+
+## What's next?
+
+Congratulations! You've just published your first blog! When you build and deploy your next.js application, EasyBlog pages will be generated as static assets and can be easily scraped and downloaded by search engine. It's perfect for SEO and organic growth.
+
+- [Check out how you can customize your pages](/customization)
+- [Want to go headless? Checkout the API](/api)

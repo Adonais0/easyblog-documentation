@@ -1,0 +1,172 @@
+export const metadata = {
+  title: 'Webhooks',
+  description:
+    'In this guide, we will look at how to register and consume webhooks to integrate your app with Protocol.',
+}
+
+
+<Note>
+  Before you can make requests to the Protocol API, you will need to grab your
+  API key from your dashboard. You find it under [Settings &raquo; API](#).
+</Note>
+
+```json {{ title: 'Example webhook payload' }}
+{
+  "id": "a056V7R7NmNRjl70",
+  "type": "conversation.updated",
+  "payload": {
+    "id": "WAz8eIbvDR60rouK"
+    // ...
+  }
+}
+```
+
+In the example above, a conversation was `updated`, and the payload type is a `conversation`.
+
+<div className="not-prose">
+  <Button href="#event-types" variant="text" arrow="right">
+    <>See all event types</>
+  </Button>
+</div>
+
+---
+
+## Event types
+
+<Row>
+  <Col>
+
+    <Properties>
+      <Property name="contact.created">
+        A new contact was created.
+      </Property>
+      <Property name="contact.updated">
+        An existing contact was updated.
+      </Property>
+      <Property name="contact.deleted">
+        A contact was successfully deleted.
+      </Property>
+      <Property name="conversation.created">
+        A new conversation was created.
+      </Property>
+      <Property name="conversation.updated">
+        An existing conversation was updated.
+      </Property>
+      <Property name="conversation.deleted">
+        A conversation was successfully deleted.
+      </Property>
+      <Property name="message.created">
+        A new message was created.
+      </Property>
+      <Property name="message.updated">
+        An existing message was updated.
+      </Property>
+      <Property name="message.deleted">
+        A message was successfully deleted.
+      </Property>
+      <Property name="group.created">
+        A new group was created.
+      </Property>
+      <Property name="group.updated">
+        An existing group was updated.
+      </Property>
+      <Property name="group.deleted">
+        A group was successfully deleted.
+      </Property>
+      <Property name="attachment.created">
+        A new attachment was created.
+      </Property>
+      <Property name="attachment.updated">
+        An existing attachment was updated.
+      </Property>
+      <Property name="attachment.deleted">
+        An attachment was successfully deleted.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    ```json {{ 'title': 'Example payload' }}
+    {
+      "id": "a056V7R7NmNRjl70",
+      "type": "message.updated",
+      "payload": {
+        "id": "SIuAFUNKdSYHZF2w",
+        "conversation_id": "xgQQXg3hrtjh7AvZ",
+        "contact": {
+          "id": "WAz8eIbvDR60rouK",
+          "username": "KevinMcCallister",
+          "phone_number": "1-800-759-3000",
+          "avatar_url": "https://assets.protocol.chat/avatars/kevin.jpg",
+          "last_active_at": 705103200,
+          "created_at": 692233200
+        },
+        "message": "I’m traveling with my dad. He’s at a meeting. I hate meetings.",
+        "reactions": [],
+        "attachments": [],
+        "read_at": 705103200,
+        "created_at": 692233200,
+        "updated_at": 692233200
+      }
+    }
+    ```
+
+  </Col>
+</Row>
+
+---
+<CodeGroup>
+
+```bash {{ title: 'cURL' }}
+# cURL is most likely already installed on your machine
+curl --version
+```
+
+```bash {{ language: 'js' }}
+# Install the Protocol JavaScript SDK
+npm install @example/protocol-api --save
+```
+
+```bash {{ language: 'python' }}
+# Install the Protocol Python SDK
+pip install protocol_api
+```
+
+```bash {{ language: 'php' }}
+# Install the Protocol PHP SDK
+composer require protocol/sdk
+```
+
+</CodeGroup>
+
+
+<CodeGroup title="Verifying a request">
+
+```python
+from flask import request
+import hashlib
+import hmac
+
+signature = request.headers.get("x-protocol-signature")
+hash = hmac.new(bytes(secret, "ascii"), bytes(payload, "ascii"), hashlib.sha256)
+
+if hash.hexdigest() == signature:
+    # Request is verified
+else:
+    # Request could not be verified
+```
+
+```php
+$signature = $request['headers']['x-protocol-signature'];
+$hash = hash_hmac('sha256', $payload, $secret);
+
+if (hash_equals($hash, $signature)) {
+  // Request is verified
+} else {
+  // Request could not be verified
+}
+```
+
+</CodeGroup>
+

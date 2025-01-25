@@ -1,0 +1,42 @@
+import { Guides } from '@/components/Guides'
+import { Resources } from '@/components/Resources'
+import { HeroPattern } from '@/components/HeroPattern'
+
+export const metadata = {
+  title: 'EasyBlog Documentation',
+  description:
+    'Learn everything there is to know about the Protocol API and integrate Protocol into your product.',
+}
+
+export const sections = [
+  { title: 'Guides', id: 'guides' },
+  { title: 'Resources', id: 'resources' },
+]
+
+<HeroPattern />
+
+# Welcome to EasyBlog
+
+EasyBlog is a light-weight blog CMS that allows you to add a blog site to your web application within minutes. It currently supports Next.js applications using page router or app router. {{ className: 'lead' }}
+
+We are on a mission to provide the easiest way for builders to write. With EasyBlog, you can forget about HTML and CSS, forget about MDX while figuring out image importing paths, and save hours of time optimizing for SEO. EasyBlog provides out-of-box static blog pages with customizable SEO tags. Get started today! {{ className: 'lead' }}
+
+## Key Features
+
+- Rapid blog setup for Next.js (Page Router & App Router)
+- Zero-configuration SEO optimization
+- Automatic static page generation
+- Notion-like rich text editor
+- Minimal code required
+
+## Getting started {{ anchor: false }}
+
+To get started, create a new project in your [EasyBlog Portal]('https://app.easyblog.io'), then read about how to integrate the easyblog nextjs package to your application. {{ className: 'lead' }}
+
+<div className="not-prose">
+  <Button href="/quickstart" variant="text" arrow="right">
+    <>Get Started</>
+  </Button>
+</div>
+
+{/* <Guides /> */}

@@ -1,0 +1,121 @@
+import blogListCard from '@/images/screenshots/blog-list-card.png'
+import blogListList from '@/images/screenshots/blog-list-list.png'
+import blogListSimple from '@/images/screenshots/blog-list-simple.png'
+import Image from 'next/image'
+
+export const metadata = {
+  title: 'Customization',
+  description:
+    'By tuning different props, user can customize how their blog page looks',
+}
+
+
+# Customization
+
+EasyBlog offers several customization options you can try to make your blog site look different. {{ className: 'lead' }}
+
+```tsx
+<NextBlogListPage 
+  ...
+  type="grid" // grid | list
+  darkMode={true} // true | false, default true
+  displayOptions={{ // Customize based on your need
+  showThumbnail: true,
+  showReadingTime: true,
+  showExcerpt: true,
+  showTags: true,
+  showDate: true,
+  showAuthor: true,
+  showCategory: true,
+}}
+/>
+```
+
+## Examples
+
+Here are some different variants you can try with EasyBlog 
+
+<Row>
+  <Col>
+    ```tsx
+      <NextBlogListPage 
+        ...
+        type="grid"
+        darkMode={true}
+        displayOptions={{
+        showThumbnail: true,
+        showReadingTime: true,
+        showExcerpt: true,
+        showTags: true,
+        showDate: true,
+        showAuthor: true,
+        showCategory: true,
+      }}
+    />
+    ```
+  </Col>
+
+  <Col>
+    <Image
+      src={blogListCard}
+    />
+  </Col>
+</Row>
+
+---
+
+<Row>
+  <Col>
+    ```tsx
+      <NextBlogListPage 
+        ...
+        type="list"
+        darkMode={true}
+        displayOptions={{
+        showThumbnail: true,
+        showReadingTime: true,
+        showExcerpt: true,
+        showTags: true,
+        showDate: true,
+        showAuthor: false,
+        showCategory: true,
+      }}
+    />
+    ```
+  </Col>
+
+  <Col>
+    <Image
+      src={blogListList}
+    />
+  </Col>
+</Row>
+
+---
+
+<Row>
+  <Col>
+    ```tsx
+      <NextBlogListPage 
+        ...
+        type="list"
+        darkMode={true}
+        displayOptions={{
+        showThumbnail: false,
+        showReadingTime: false,
+        showExcerpt: true,
+        showTags: true,
+        showDate: true,
+        showAuthor: false,
+        showCategory: true,
+      }}
+    />
+    ```
+  </Col>
+
+  <Col>
+    <Image
+      src={blogListSimple}
+    />
+  </Col>
+</Row>

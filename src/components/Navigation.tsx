@@ -236,7 +236,7 @@ export const navigation: Array<NavGroup> = [
       { title: 'Introduction', href: '/' },
       { title: 'Quickstart', href: '/quickstart' },
       { title: 'Customization', href: '/customization' },
-      // { title: 'API Reference', href: '/api' },
+      { title: 'API Reference', href: '/api' },
       // { title: 'Webhooks', href: '/webhooks' },
     ],
   },
